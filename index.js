@@ -82,31 +82,34 @@ const AQUAFLUX_NFT_ABI = [
   "function mint(uint8 nftType, uint256 expiresAt, bytes signature) external"
 ];
 
-function getTokenName(tokenAddress) {
-  if (tokenAddress === PHRS_ADDRESS) return "PHRS";
-  if (tokenAddress === WPHRS_ADDRESS) return "WPHRS";
-  if (tokenAddress === USDT_ADDRESS) return "USDT";
-  return "Unknown";
-}
+const getTokenName = (tokenAddress) => {
+  const tokens = {
+    [PHRS_ADDRESS]: "PHRS",
+    [WPHRS_ADDRESS]: "WPHRS",
+    [USDT_ADDRESS]: "USDT",
+  };
+  return tokens[tokenAddress] || "Unknown";
+};
 
-function loadConfig() {
+const loadConfig = () => {
   try {
     if (fs.existsSync(CONFIG_FILE)) {
-      const data = fs.readFileSync(CONFIG_FILE, "utf8");
-      const config = JSON.parse(data);
-      dailyActivityConfig.swapRepetitions = Number(config.swapRepetitions) || 10;
-      dailyActivityConfig.sendPhrsRepetitions = Number(config.sendPhrsRepetitions) || 10;
-      dailyActivityConfig.addLiquidityRepetitions = Number(config.addLiquidityRepetitions) || 10;
-      dailyActivityConfig.tipRepetitions = Number(config.tipRepetitions) || 1;
-      dailyActivityConfig.minTipAmount = Number(config.minTipAmount) || 0.001;
-      dailyActivityConfig.maxTipAmount = Number(config.maxTipAmount) || 0.003;
-      dailyActivityConfig.mintRepetitions = Number(config.mintRepetitions) || 1;
-      addLog(`Loaded config: Auto Swap = ${dailyActivityConfig.swapRepetitions}, Auto Send PHRS = ${dailyActivityConfig.sendPhrsRepetitions}, Auto Add LP = ${dailyActivityConfig.addLiquidityRepetitions}, Auto Tip = ${dailyActivityConfig.tipRepetitions}, Auto Mint = ${dailyActivityConfig.mintRepetitions}`, "success");
+      const data = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
+      Object.assign(dailyActivityConfig, {
+        swapRepetitions: Number(data.swapRepetitions) || 10,
+        sendPhrsRepetitions: Number(data.sendPhrsRepetitions) || 10,
+        addLiquidityRepetitions: Number(data.addLiquidityRepetitions) || 10,
+        tipRepetitions: Number(data.tipRepetitions) || 1,
+        minTipAmount: Number(data.minTipAmount) || 0.001,
+        maxTipAmount: Number(data.maxTipAmount) || 0.003,
+        mintRepetitions: Number(data.mintRepetitions) || 1,
+      });
+      addLog(`Loaded config: ${JSON.stringify(dailyActivityConfig)}`, "success");
     } else {
-      addLog("No config file found, using default settings.", "info");
+      addLog("No config file found, using defaults.", "info");
     }
   } catch (error) {
-    addLog(`Failed to load config: ${error.message}, using default settings.`, "error");
+    addLog(`Failed to load config: ${error.message}`, "error");
   }
 }
 
@@ -1687,7 +1690,7 @@ function safeRender() {
   setTimeout(() => {
     try {
       if (!isHeaderRendered) {
-        figlet.text("NT EXHAUST", { font: "ANSI Shadow" }, (err, data) => {
+        figlet.text("AVA", { font: "ANSI Shadow" }, (err, data) => {
           if (!err) headerBox.setContent(`{center}{bold}{cyan-fg}${data}{/cyan-fg}{/bold}{/center}`);
           isHeaderRendered = true;
         });
