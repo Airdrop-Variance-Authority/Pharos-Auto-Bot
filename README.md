@@ -22,7 +22,7 @@ npm install
 6. Run the script
 
 ```sh
-node index.js
+npm run start
 ```
 
 ## Config
