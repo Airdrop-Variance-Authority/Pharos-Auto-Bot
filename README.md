@@ -3,7 +3,7 @@
 This is the updated version for Airdrop Variance Authority.
 
 Changes:
-- Update Dodo API Key
+- Use your own Dodo API Key for better security
 - Clears guide
 - Update packages
 

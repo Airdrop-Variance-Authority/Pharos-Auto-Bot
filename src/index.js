@@ -19,7 +19,7 @@ const API_BASE_URL = "https://api.pharosnetwork.xyz";
 const FAUCET_USDT_URL = "https://testnet-router.zenithswap.xyz/api/v1/faucet";
 const AQUAFLUX_BASE_URL = "https://api.aquaflux.pro/api/v1/users/wallet-login";
 const CONFIG_FILE = "config.json";
-const isDebug = false;
+const isDebug = true;
 
 let walletInfo = {
   address: "N/A",
