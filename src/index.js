@@ -339,7 +339,7 @@ async function updateWalletData() {
         new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider).balanceOf(wallet.address).catch(() => 0)
       ]);
       const formattedPHRS = Number(ethers.formatEther(phrsBalance)).toFixed(4);
-      const formattedWPHRS = Number(ethers.formatEther(balanceWPHRS)).toFixed(2);
+      const formattedWPHRS = Number(ethers.formatEther(balanceWPHRS)).toFixed(4);
       const formattedUSDT = Number(ethers.formatUnits(balanceUSDT, 6)).toFixed(2);
       const formattedEntry = `${i === selectedWalletIndex ? "→ " : "  "}${getShortAddress(wallet.address)}   ${formattedPHRS.padEnd(8)} ${formattedWPHRS.padEnd(8)}${formattedUSDT.padEnd(8)}`;
       if (i === selectedWalletIndex) {
@@ -1102,6 +1102,20 @@ async function runDailyActivity() {
       if (!loginSuccess) {
         addLog(`Account ${accountIndex + 1}: Skipping daily activity due to login failure.`, "error");
         continue;
+      }
+
+      if (!shouldStop) {
+        const fromToken = PHRS_ADDRESS;
+        const toToken = WPHRS_ADDRESS;
+        let amount = (Math.random() * (0.004 - 0.001) + 0.001).toFixed(4);
+        const direction = "PHRS ➯ WPHRS";
+        const wrapSuccess = await executeSwap(wallet, provider, 1, fromToken, toToken, amount, direction, accountIndex, proxyUrl);
+        if (wrapSuccess) {
+          const randomDelay = Math.floor(Math.random() * (30000 - 15000 + 1)) + 15000;
+          addLog(`Account ${accountIndex + 1}: Completed successful wrap before adding liquidity.`, "success");
+          await updateWallets();
+          await sleep(randomDelay);
+        }
       }
 
       if (!shouldStop) {
