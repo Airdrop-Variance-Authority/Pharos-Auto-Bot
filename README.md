@@ -40,3 +40,5 @@ Modify `config.json` to increase your transactions:
 ```
 
 :warning: Don't use proxies if you're using your retroactive or active addresses, only use farm wallets.
+
+**Before redistribute this code, please don't forget to change the data of your dodo key, private key, and proxy files**
