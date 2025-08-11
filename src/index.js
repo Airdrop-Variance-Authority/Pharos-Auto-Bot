@@ -437,6 +437,31 @@ async function getDodoRoute(fromToken, toToken, fromAmount, userAddr, proxyUrl) 
   }
 }
 
+const waitForTransactionWithRetry = async (provider, txHash, maxRetries = 5, baseDelayMs = 1000) => {
+  let retries = 0;
+  while (retries < maxRetries) {
+    try {
+      const receipt = await provider.getTransactionReceipt(txHash);
+      if (receipt) {
+        return receipt;
+      }
+      addLog(`Transaction receipt not found for ${txHash}, retrying (${retries + 1}/${maxRetries})...`, 'error');
+      await new Promise(resolve => setTimeout(resolve, baseDelayMs * Math.pow(2, retries)));
+      retries++;
+    } catch (error) {
+      addLog(`Error fetching transaction receipt for ${txHash}: ${error.message}`, 'error');
+      if (error.code === -32008) {
+        addLog(`RPC error -32008, retrying (${retries + 1}/${maxRetries})...`, 'error');
+        await new Promise(resolve => setTimeout(resolve, baseDelayMs * Math.pow(2, retries)));
+        retries++;
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw new Error(`Failed to get transaction receipt for ${txHash} after ${maxRetries} retries`);
+}
+
 async function executeSwap(wallet, provider, swapCount, fromToken, toToken, amount, direction, accountIndex, proxyUrl) {
   if (shouldStop) {
     addLog("Swap stopped due to stop request.", "info");
@@ -480,7 +505,8 @@ async function executeSwap(wallet, provider, swapCount, fromToken, toToken, amou
     };
 
     const sentTx = await signer.sendTransaction(tx);
-    addLog(`Account ${accountIndex + 1} - Swap ${swapCount}: Transaction sent. Hash: ${getShortHash(sentTx.hash)}`, "success");
+    const receipt = await waitForTransactionWithRetry(provider, sentTx.hash);
+    addLog(`Account ${accountIndex + 1} - Swap ${swapCount}: Transaction sent. Hash: ${getShortHash(receipt.hash)}`, "success");
     await sentTx.wait();
     addLog(`Account ${accountIndex + 1} - Swap ${swapCount}: Transaction Confirmed. Swap ${direction} completed`, "success");
     return true;

@@ -10,7 +10,7 @@ Changes:
 ## Setup
 
 1. Fill `wallets.txt` with your `send PHRS` addresses. Replace the current one.
-2. Add proxies to `proxies.txt`. Replace the current one.
+2. Add proxies to `proxies.txt`. Replace the current one. Remove `proxies.txt` if you're not using it.
 3. Add private keys to `privatekeys.txt`. Replace the current one.
 4. You can add your dodokey to `dodokey.txt`. Replace the current one. [Create dodo key here](https://developer.dodoex.io/).
 5. Install package
