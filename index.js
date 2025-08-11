@@ -65,10 +65,6 @@ const ERC20_ABI = [
   "function allowance(address owner, address spender) view returns (uint256)"
 ];
 
-const ROUTER_ABI = [
-  "function mixSwap(address fromToken, address toToken, uint256 fromAmount, uint256 resAmount, uint256 minReturnAmount, address[] memory proxyList, address[] memory poolList, address[] memory routeList, uint256 direction, bytes[] memory moreInfos, uint256 deadLine) external payable returns (uint256)"
-];
-
 const LP_ABI = [
   "function addDVMLiquidity(address dvmAddress, uint256 baseInAmount, uint256 quoteInAmount, uint256 baseMinAmount, uint256 quoteMinAmount, uint8 flag, uint256 deadLine) external payable returns (uint256, uint256, uint256)"
 ];
